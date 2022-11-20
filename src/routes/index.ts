@@ -1,8 +1,8 @@
 import express, { Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
-import sharp from 'sharp';
 import { isImageExist } from '../middlewares/imagecheck';
+import resize from '../utilties/imageUtil';
 
 const routes = express.Router();
 const baseImagePath: string = path.join(__dirname, `../../assets/fullsize/`);
@@ -36,16 +36,7 @@ routes.get(
             `${req.params.imageName}${req.params.imageHeight}x${req.params.imageWidth}.jpg`
         )
       ) {
-        await sharp(baseImagePath + `${req.params.imageName}.jpg`)
-          .resize(
-            parseInt(req.params.imageHeight),
-            parseInt(req.params.imageWidth)
-          )
-          .toFormat('jpg')
-          .toFile(
-            resizedImagePath +
-              `${req.params.imageName}${req.params.imageHeight}x${req.params.imageWidth}.jpg`
-          );
+     await resize(req.params.imageName, req.params.imageHeight, req.params.imageWidth);
       }
       res.sendFile(
         resizedImagePath +
